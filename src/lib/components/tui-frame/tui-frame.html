@@ -1,0 +1,49 @@
+@if (!resolvedHideBorders().top) {
+    <div class="tui-frame__row tui-frame__row--top" aria-hidden="true">
+        @if (!resolvedHideBorders().topLeft) {
+            <span class="tui-frame__edge-h-corner">{{ cornerChar('top', 'start') }}</span>
+        }
+        <span
+            class="tui-frame__edge-h-run"
+            [style.width]="topEdgeRunWidthCh()"
+        >{{ topEdgeRun() }}</span>
+        @if (!resolvedHideBorders().topRight) {
+            <span class="tui-frame__edge-h-corner">{{ cornerChar('top', 'end') }}</span>
+        }
+    </div>
+}
+
+<div class="tui-frame__row tui-frame__row--middle">
+    @if (!resolvedHideBorders().left) {
+        <div class="tui-frame__edge tui-frame__edge--v" aria-hidden="true">
+            @for (line of leftEdgeLines(); track $index) {
+                <span class="tui-frame__edge-v-line">{{ line }}</span>
+            }
+        </div>
+    }
+    <div #contentRef class="tui-frame__content" [style.flex-direction]="contentLayout()">
+        <ng-content />
+    </div>
+    @if (!resolvedHideBorders().right) {
+        <div class="tui-frame__edge tui-frame__edge--v" aria-hidden="true">
+            @for (line of rightEdgeLines(); track $index) {
+                <span class="tui-frame__edge-v-line">{{ line }}</span>
+            }
+        </div>
+    }
+</div>
+
+@if (!resolvedHideBorders().bottom) {
+<div class="tui-frame__row tui-frame__row--bottom" aria-hidden="true">
+    @if (!resolvedHideBorders().bottomLeft) {
+        <span class="tui-frame__edge-h-corner">{{ cornerChar('bottom', 'start') }}</span>
+    }
+    <span
+        class="tui-frame__edge-h-run"
+        [style.width]="bottomEdgeRunWidthCh()"
+    >{{ bottomEdgeRun() }}</span>
+    @if (!resolvedHideBorders().bottomRight) {
+        <span class="tui-frame__edge-h-corner">{{ cornerChar('bottom', 'end') }}</span>
+    }
+</div>
+}

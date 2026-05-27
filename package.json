@@ -1,17 +1,33 @@
 {
   "name": "rng-tui",
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "description": "Terminal-style UI components for Angular.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rulofvdm/rng-tui.git"
+  },
+  "homepage": "https://github.com/Rulofvdm/rng-tui",
+  "bugs": {
+    "url": "https://github.com/Rulofvdm/rng-tui/issues"
+  },
+  "keywords": [
+    "angular",
+    "terminal",
+    "tui"
+  ],
   "scripts": {
     "ng": "ng",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
+    "publish": "ng build && cd dist/rng-tui && npm publish"
   },
   "private": false,
   "packageManager": "npm@10.9.7",
   "peerDependencies": {
-    "@angular/common": "^21.2.0",
-    "@angular/core": "^21.2.0"
+    "@angular/common": ">=16.0.0",
+    "@angular/core": ">=16.0.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"

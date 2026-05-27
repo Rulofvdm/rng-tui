@@ -20,7 +20,7 @@ export class LayoutEngine {
       const mainAxisSizeInUnits: number = (isRow ? child.width : child.height) ?? 0
       const mainAxisSizeInPixels: number = this.unitToPixelSize('ch', mainAxisSizeInUnits)
       const mainAxisMarginInUnits: number = (isRow ? child.margins.left + child.margins.right : child.margins.top + child.margins.bottom)
-      const mainAxisMarginInPixels: number = this.unitToPixelSize('ch', mainAxisMarginInUnits)
+      const mainAxisMarginInPixels: number = this.unitToPixelSize(isRow ? 'ch' : 'lh', mainAxisMarginInUnits)
       
       pixelsLeftToDistributeAlongMainAxis = Math.max(0, pixelsLeftToDistributeAlongMainAxis - mainAxisSizeInPixels - mainAxisMarginInPixels)
 

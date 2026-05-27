@@ -1,15 +1,6 @@
-@if (!resolvedHideBorders().top) {
+@if (topRowVisible()) {
     <div class="tui-frame__row tui-frame__row--top" aria-hidden="true">
-        @if (!resolvedHideBorders().topLeft) {
-            <span class="tui-frame__edge-h-corner">{{ cornerChar('top', 'start') }}</span>
-        }
-        <span
-            class="tui-frame__edge-h-run"
-            [style.width]="topEdgeRunWidthCh()"
-        >{{ topEdgeRun() }}</span>
-        @if (!resolvedHideBorders().topRight) {
-            <span class="tui-frame__edge-h-corner">{{ cornerChar('top', 'end') }}</span>
-        }
+        <span class="tui-frame__edge-h-row">{{ topRowText() }}</span>
     </div>
 }
 
@@ -33,17 +24,8 @@
     }
 </div>
 
-@if (!resolvedHideBorders().bottom) {
+@if (bottomRowVisible()) {
 <div class="tui-frame__row tui-frame__row--bottom" aria-hidden="true">
-    @if (!resolvedHideBorders().bottomLeft) {
-        <span class="tui-frame__edge-h-corner">{{ cornerChar('bottom', 'start') }}</span>
-    }
-    <span
-        class="tui-frame__edge-h-run"
-        [style.width]="bottomEdgeRunWidthCh()"
-    >{{ bottomEdgeRun() }}</span>
-    @if (!resolvedHideBorders().bottomRight) {
-        <span class="tui-frame__edge-h-corner">{{ cornerChar('bottom', 'end') }}</span>
-    }
+    <span class="tui-frame__edge-h-row">{{ bottomRowText() }}</span>
 </div>
 }

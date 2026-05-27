@@ -5,7 +5,6 @@
   overflow: hidden;
   font-family: inherit;
   line-height: 1;
-  transition: width 0.7s ease-in-out, height 0.7s ease-in-out;
 }
 
 .tui-frame__row {
@@ -50,6 +49,18 @@
   overflow: hidden;
   white-space: pre;
   font-kerning: none;
+  letter-spacing: 0;
+  box-sizing: border-box;
+}
+
+.tui-frame__edge-h-row {
+  flex: 0 0 auto;
+  height: 1lh;
+  line-height: 1lh;
+  overflow: hidden;
+  white-space: pre;
+  font-kerning: none;
+  font-variant-ligatures: none;
   letter-spacing: 0;
   box-sizing: border-box;
 }

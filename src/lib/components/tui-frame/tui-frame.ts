@@ -13,6 +13,13 @@ import {
 } from '@angular/core'
 import type { TuiFrameLayout } from './tui-frame-layout'
 import { TuiLayoutRunner } from '../../tui-layout-runner'
+import {
+  renderHorizontalRun,
+  shouldRenderHorizontalRow,
+  type TuiHorizontalAlignment,
+} from './tui-frame-border'
+
+export type { TuiHorizontalAlignment } from './tui-frame-border'
 
 export interface TuiBorderCharacters {
   topLeft?: string
@@ -89,15 +96,19 @@ const DEFAULT_FILL_WEIGHT = 1
   host: {
     '[style.width]': 'hostWidth()',
     '[style.height]': 'hostHeight()',
-    '[style.margin-left]': 'resolvedMargins().left',
-    '[style.margin-right]': 'resolvedMargins().right',
-    '[style.margin-top]': 'resolvedMargins().top',
-    '[style.margin-bottom]': 'resolvedMargins().bottom',
+    '[style.margin-left]': 'hostMarginLeft()',
+    '[style.margin-right]': 'hostMarginRight()',
+    '[style.margin-top]': 'hostMarginTop()',
+    '[style.margin-bottom]': 'hostMarginBottom()',
   },
 
 })
 export class TuiFrame implements AfterViewInit, OnDestroy {
   hideBorders = input<TuiHideBorders>(false)
+  borderHeader = input('')
+  borderFooter = input('')
+  borderHeaderAlign = input<TuiHorizontalAlignment>('left')
+  borderFooterAlign = input<TuiHorizontalAlignment>('left')
 
   /** How direct child {@link TuiFrame} elements in content are laid out. */
   contentLayout = input<'row' | 'column'>('column')
@@ -276,22 +287,28 @@ export class TuiFrame implements AfterViewInit, OnDestroy {
     if (rows == null) {
       return null
     }
-    const hidden = this.resolvedHideBorders()
     let inner = rows
-    if (!hidden.top) {
+    if (this.topRowVisible()) {
       inner--
     }
-    if (!hidden.bottom) {
+    if (this.bottomRowVisible()) {
       inner--
     }
     return Math.max(0, inner)
   })
 
+  readonly topRowVisible = computed(() =>
+    shouldRenderHorizontalRow(this.resolvedHideBorders().top, this.borderHeader()),
+  )
+
+  readonly bottomRowVisible = computed(() =>
+    shouldRenderHorizontalRow(this.resolvedHideBorders().bottom, this.borderFooter()),
+  )
+
   readonly topEdgeRun = computed(() => this.horizontalEdgeRun('top'))
   readonly bottomEdgeRun = computed(() => this.horizontalEdgeRun('bottom'))
-
-  readonly topEdgeRunWidthCh = computed(() => this.horizontalRunWidthCh('top'))
-  readonly bottomEdgeRunWidthCh = computed(() => this.horizontalRunWidthCh('bottom'))
+  readonly topRowText = computed(() => this.horizontalRowText('top'))
+  readonly bottomRowText = computed(() => this.horizontalRowText('bottom'))
 
   /** One border glyph per inner row — aligned to 1lh cells (see template). */
   readonly leftEdgeLines = computed((): string[] =>
@@ -354,22 +371,35 @@ export class TuiFrame implements AfterViewInit, OnDestroy {
     return runCols
   }
 
-  private horizontalRunWidthCh(side: 'top' | 'bottom'): string | null {
-    const runCols = this.horizontalRunColCount(side)
-    return runCols > 0 ? `${runCols}ch` : null
-  }
-
   private horizontalEdgeRun(side: 'top' | 'bottom'): string {
     const runCols = this.horizontalRunColCount(side)
     if (runCols <= 0) {
       return ''
     }
+    const hidden = this.resolvedHideBorders()
     const chars = this.borderCharacters()
-    const edgeChar =
-      side === 'top'
+    const sideHidden = side === 'top' ? hidden.top : hidden.bottom
+    const edgeChar = sideHidden
+      ? ' '
+      : side === 'top'
         ? (chars.horizontalTop ?? '─')
         : (chars.horizontalBottom ?? '─')
-    return edgeChar.repeat(runCols)
+    const label = side === 'top' ? this.borderHeader() : this.borderFooter()
+    const align = side === 'top' ? this.borderHeaderAlign() : this.borderFooterAlign()
+    return renderHorizontalRun(runCols, edgeChar, label, align)
+  }
+
+  private horizontalRowText(side: 'top' | 'bottom'): string {
+    const run = this.horizontalEdgeRun(side)
+    if (run.length === 0) {
+      return ''
+    }
+    const hidden = this.resolvedHideBorders()
+    const startHidden = side === 'top' ? hidden.topLeft : hidden.bottomLeft
+    const endHidden = side === 'top' ? hidden.topRight : hidden.bottomRight
+    const start = startHidden ? '' : this.cornerChar(side, 'start')
+    const end = endHidden ? '' : this.cornerChar(side, 'end')
+    return `${start}${run}${end}`
   }
 
   private edgeLinesPerInnerRow(char: string): string[] {
@@ -389,4 +419,9 @@ export class TuiFrame implements AfterViewInit, OnDestroy {
     const rows = this.appliedHeight()
     return rows != null ? `${rows}lh` : null  // or 1em per row if lh is unreliable
   })
+
+  readonly hostMarginLeft = computed(() => `${this.resolvedMargins().left}ch`)
+  readonly hostMarginRight = computed(() => `${this.resolvedMargins().right}ch`)
+  readonly hostMarginTop = computed(() => `${this.resolvedMargins().top}lh`)
+  readonly hostMarginBottom = computed(() => `${this.resolvedMargins().bottom}lh`)
 }

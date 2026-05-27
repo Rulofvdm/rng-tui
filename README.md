@@ -13,5 +13,5 @@ npm install rng-tui
 
 Start here for required project setup, then see component APIs:
 
-- [`docs/setup.md`](docs/setup.md)
-- [`docs/components.md`](docs/components.md)
+- [`docs/setup.md`](https://github.com/Rulofvdm/rng-tui/blob/main/docs/setup.md)
+- [`docs/components.md`](https://github.com/Rulofvdm/rng-tui/blob/main/docs/components.md)

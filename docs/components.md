@@ -48,6 +48,19 @@ Frame container with optional borders, margins, and sizing rules (fixed or fill)
   - Controls which border segments are hidden.
   - `true` or `{ all: true }` hides all borders.
   - Side-specific options override axis options.
+- `borderHeader: string` (default: `''`)
+  - Text drawn into the top border row between the corners.
+  - Longer text is truncated to fit the available width.
+  - If `hideBorders` hides the top side but `borderHeader` is non-empty, the top row still renders so the label remains visible.
+- `borderFooter: string` (default: `''`)
+  - Text drawn into the bottom border row between the corners.
+  - Same truncation and visibility rules as `borderHeader`.
+- `borderHeaderAlign: 'left' | 'center' | 'right'` (default: `'left'`)
+  - Horizontal alignment of `borderHeader` within the top border run.
+  - Remaining space is filled with the top horizontal border character (or spaces when the top border is hidden).
+- `borderFooterAlign: 'left' | 'center' | 'right'` (default: `'left'`)
+  - Horizontal alignment of `borderFooter` within the bottom border run.
+  - Same padding behavior as `borderHeaderAlign`.
 - `borderCharacters: { topLeft?: string; topRight?: string; bottomLeft?: string; bottomRight?: string; horizontal?: string; horizontalTop?: string; horizontalBottom?: string; vertical?: string; verticalLeft?: string; verticalRight?: string }`
   - Customizes border glyphs.
   - `horizontal` applies to both top and bottom if set.

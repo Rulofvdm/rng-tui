@@ -1,0 +1,15 @@
+{
+  "eslint.useFlatConfig": true,
+  "eslint.validate": [
+    "typescript",
+    "html"
+  ],
+  "eslint.workingDirectories": [
+    {
+      "mode": "auto"
+    }
+  ],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  }
+}

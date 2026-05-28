@@ -16,10 +16,15 @@ import { TuiLayoutRunner } from '../../tui-layout-runner'
 import {
   renderHorizontalRun,
   shouldRenderHorizontalRow,
-  type TuiHorizontalAlignment,
+  type TuiHorizontalSlots,
 } from './tui-frame-border'
 
-export type { TuiHorizontalAlignment } from './tui-frame-border'
+export type { TuiHorizontalAlignment, TuiHorizontalSlots } from './tui-frame-border'
+
+export interface TuiFrameBorderContent {
+  top?: TuiHorizontalSlots
+  bottom?: TuiHorizontalSlots
+}
 
 export interface TuiBorderCharacters {
   topLeft?: string
@@ -56,7 +61,7 @@ export type TuiHideBorders = boolean | {
 }
 
 /** Per-side/corner flags: `true` means hidden. */
-export type TuiResolvedHideBorders = {
+export interface TuiResolvedHideBorders {
   top: boolean
   right: boolean
   bottom: boolean
@@ -76,7 +81,7 @@ export type TuiMargins = number | {
   left?: number
 }
 
-export type TuiResolvedMargins = {
+export interface TuiResolvedMargins {
   top: number
   right: number
   bottom: number
@@ -105,10 +110,7 @@ const DEFAULT_FILL_WEIGHT = 1
 })
 export class TuiFrame implements AfterViewInit, OnDestroy {
   hideBorders = input<TuiHideBorders>(false)
-  borderHeader = input('')
-  borderFooter = input('')
-  borderHeaderAlign = input<TuiHorizontalAlignment>('left')
-  borderFooterAlign = input<TuiHorizontalAlignment>('left')
+  borderContent = input<TuiFrameBorderContent>({})
 
   /** How direct child {@link TuiFrame} elements in content are laid out. */
   contentLayout = input<'row' | 'column'>('column')
@@ -218,7 +220,6 @@ export class TuiFrame implements AfterViewInit, OnDestroy {
   applySize(size: { width: number, height: number }): void {
     this.appliedWidth.set(size.width)
     this.appliedHeight.set(size.height)
-    queueMicrotask(() => this.contentLayoutRunner?.recalculate())
   }
 
   ngAfterViewInit(): void {
@@ -232,7 +233,6 @@ export class TuiFrame implements AfterViewInit, OnDestroy {
       () => this.childFrames.toArray(),
     )
     this.contentLayoutRunner.attach()
-    this.childFrames.changes.subscribe(() => this.contentLayoutRunner?.recalculate())
   }
 
   ngOnDestroy(): void {
@@ -298,11 +298,11 @@ export class TuiFrame implements AfterViewInit, OnDestroy {
   })
 
   readonly topRowVisible = computed(() =>
-    shouldRenderHorizontalRow(this.resolvedHideBorders().top, this.borderHeader()),
+    shouldRenderHorizontalRow(this.resolvedHideBorders().top, this.horizontalSlots('top')),
   )
 
   readonly bottomRowVisible = computed(() =>
-    shouldRenderHorizontalRow(this.resolvedHideBorders().bottom, this.borderFooter()),
+    shouldRenderHorizontalRow(this.resolvedHideBorders().bottom, this.horizontalSlots('bottom')),
   )
 
   readonly topEdgeRun = computed(() => this.horizontalEdgeRun('top'))
@@ -384,9 +384,17 @@ export class TuiFrame implements AfterViewInit, OnDestroy {
       : side === 'top'
         ? (chars.horizontalTop ?? '─')
         : (chars.horizontalBottom ?? '─')
-    const label = side === 'top' ? this.borderHeader() : this.borderFooter()
-    const align = side === 'top' ? this.borderHeaderAlign() : this.borderFooterAlign()
-    return renderHorizontalRun(runCols, edgeChar, label, align)
+    const slots = this.horizontalSlots(side)
+    return renderHorizontalRun(runCols, edgeChar, slots)
+  }
+
+  private horizontalSlots(side: 'top' | 'bottom'): TuiHorizontalSlots {
+    const sideSlots = this.borderContent()[side] ?? {}
+    return {
+      left: sideSlots.left,
+      center: sideSlots.center,
+      right: sideSlots.right,
+    }
   }
 
   private horizontalRowText(side: 'top' | 'bottom'): string {

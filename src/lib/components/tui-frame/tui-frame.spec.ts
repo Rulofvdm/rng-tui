@@ -49,7 +49,7 @@ describe('TuiFrame', () => {
 
   it('shows header text when top border is hidden', () => {
     fixture.componentRef.setInput('hideBorders', { top: true });
-    fixture.componentRef.setInput('borderHeader', 'HEADER');
+    fixture.componentRef.setInput('borderContent', { top: { left: 'HEADER' } });
     component.applySize({ width: 10, height: 4 });
     fixture.detectChanges();
 
@@ -58,7 +58,7 @@ describe('TuiFrame', () => {
   });
 
   it('truncates header text to preserve corners on small frames', () => {
-    fixture.componentRef.setInput('borderHeader', 'HEADER_TOO_LONG');
+    fixture.componentRef.setInput('borderContent', { top: { left: 'HEADER_TOO_LONG' } });
     component.applySize({ width: 6, height: 4 });
     fixture.detectChanges();
 
@@ -75,7 +75,7 @@ describe('TuiFrame', () => {
 
   it('keeps footer text when bottom border is hidden', () => {
     fixture.componentRef.setInput('hideBorders', { bottom: true });
-    fixture.componentRef.setInput('borderFooter', 'FOOT');
+    fixture.componentRef.setInput('borderContent', { bottom: { left: 'FOOT' } });
     component.applySize({ width: 10, height: 4 });
     fixture.detectChanges();
 
@@ -84,8 +84,7 @@ describe('TuiFrame', () => {
   });
 
   it('centers header text in the border run', () => {
-    fixture.componentRef.setInput('borderHeader', 'HI');
-    fixture.componentRef.setInput('borderHeaderAlign', 'center');
+    fixture.componentRef.setInput('borderContent', { top: { center: 'HI' } });
     component.applySize({ width: 10, height: 4 });
     fixture.detectChanges();
 
@@ -93,11 +92,33 @@ describe('TuiFrame', () => {
   });
 
   it('right-aligns footer text in the border run', () => {
-    fixture.componentRef.setInput('borderFooter', 'HI');
-    fixture.componentRef.setInput('borderFooterAlign', 'right');
+    fixture.componentRef.setInput('borderContent', { bottom: { right: 'HI' } });
     component.applySize({ width: 10, height: 4 });
     fixture.detectChanges();
 
     expect(component.bottomEdgeRun()).toBe('──────HI');
   });
+
+  it('supports simultaneous top left/center/right slots', () => {
+    fixture.componentRef.setInput('borderContent', {
+      top: { left: 'L', center: 'C', right: 'R' },
+    });
+    component.applySize({ width: 10, height: 4 });
+    fixture.detectChanges();
+
+    expect(component.topEdgeRun()).toBe('L──C───R');
+  });
+
+  it('allows top and bottom slots at the same time', () => {
+    fixture.componentRef.setInput('borderContent', {
+      top: { left: 'TopL', right: 'TopR' },
+      bottom: { left: 'BotL', center: 'BotC', right: 'BotR' },
+    });
+    component.applySize({ width: 12, height: 4 });
+    fixture.detectChanges();
+
+    expect(component.topEdgeRun()).toBe('TopL──TopR');
+    expect(component.bottomEdgeRun()).toBe('BotLBotCBotR');
+  });
+
 });

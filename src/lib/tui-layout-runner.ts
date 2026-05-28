@@ -44,7 +44,7 @@ export class TuiLayoutRunner {
   static measureUnitSizesInPx(el: HTMLElement): { ch: number; lh: number } {
     const probe = document.createElement('span')
     probe.style.cssText =
-      'position:absolute;visibility:hidden;width:100ch;height:100lh;font:inherit;line-height:1;'
+      'position:absolute;visibility:hidden;width:100ch;height:100lh;font:inherit;'
     el.appendChild(probe)
     const { width, height } = probe.getBoundingClientRect()
     probe.remove()

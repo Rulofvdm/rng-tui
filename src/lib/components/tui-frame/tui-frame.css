@@ -3,26 +3,6 @@
   flex-direction: column;
   box-sizing: border-box;
   overflow: hidden;
-  font-family: inherit;
-  line-height: 1;
-}
-
-.tui-frame__row {
-  display: flex;
-  flex-direction: row;
-  flex: 0 0 auto;
-  min-width: 0;
-  width: 100%;
-}
-
-.tui-frame__row--top,
-.tui-frame__row--bottom {
-  flex: 0 0 1lh;
-  align-items: stretch;
-  height: 1lh;
-  min-height: 1lh;
-  max-height: 1lh;
-  overflow: hidden;
 }
 
 .tui-frame__row--middle {
@@ -30,39 +10,6 @@
   flex: 1 1 auto;
   align-items: stretch;
   min-height: 0;
-  height: 100%;
-}
-
-.tui-frame__edge-h-corner {
-  flex: 0 0 1ch;
-  width: 1ch;
-  height: 1lh;
-  line-height: 1lh;
-  overflow: hidden;
-  box-sizing: border-box;
-}
-
-.tui-frame__edge-h-run {
-  flex: 0 0 auto;
-  height: 1lh;
-  line-height: 1lh;
-  overflow: hidden;
-  white-space: pre;
-  font-kerning: none;
-  letter-spacing: 0;
-  box-sizing: border-box;
-}
-
-.tui-frame__edge-h-row {
-  flex: 0 0 auto;
-  height: 1lh;
-  line-height: 1lh;
-  overflow: hidden;
-  white-space: pre;
-  font-kerning: none;
-  font-variant-ligatures: none;
-  letter-spacing: 0;
-  box-sizing: border-box;
 }
 
 .tui-frame__edge--v {
@@ -77,14 +24,13 @@
   border: 0;
   background: transparent;
   font: inherit;
-  overflow: hidden;
+  /* overflow: hidden; */
   box-sizing: border-box;
 }
 
 .tui-frame__edge-v-line {
   flex: 0 0 1lh;
   height: 1lh;
-  line-height: 1lh;
   overflow: hidden;
   white-space: pre;
 }

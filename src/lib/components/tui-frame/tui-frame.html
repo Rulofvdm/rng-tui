@@ -1,12 +1,12 @@
 @if (topRowVisible()) {
-    <div class="tui-frame__row tui-frame__row--top" aria-hidden="true">
-        <span class="tui-frame__edge-h-row">{{ topRowText() }}</span>
+    <div aria-hidden="true">
+        {{ topRowText() }}
     </div>
 }
 
-<div class="tui-frame__row tui-frame__row--middle">
+<div class="tui-frame__row--middle">
     @if (!resolvedHideBorders().left) {
-        <div class="tui-frame__edge tui-frame__edge--v" aria-hidden="true">
+        <div class="tui-frame__edge--v" aria-hidden="true">
             @for (line of leftEdgeLines(); track $index) {
                 <span class="tui-frame__edge-v-line">{{ line }}</span>
             }
@@ -16,7 +16,7 @@
         <ng-content />
     </div>
     @if (!resolvedHideBorders().right) {
-        <div class="tui-frame__edge tui-frame__edge--v" aria-hidden="true">
+        <div class="tui-frame__edge--v" aria-hidden="true">
             @for (line of rightEdgeLines(); track $index) {
                 <span class="tui-frame__edge-v-line">{{ line }}</span>
             }
@@ -25,7 +25,7 @@
 </div>
 
 @if (bottomRowVisible()) {
-<div class="tui-frame__row tui-frame__row--bottom" aria-hidden="true">
-    <span class="tui-frame__edge-h-row">{{ bottomRowText() }}</span>
+<div aria-hidden="true">
+    {{ bottomRowText() }}
 </div>
 }

@@ -1,4 +1,4 @@
-import { AfterContentInit, ContentChildren, Directive, ElementRef, input, OnDestroy, QueryList, signal } from '@angular/core'
+import { AfterContentInit, ContentChildren, Directive, ElementRef, inject, input, OnDestroy, QueryList, signal } from '@angular/core'
 import { TuiFrame } from './components/tui-frame/tui-frame'
 import { TuiLayoutRunner } from './tui-layout-runner'
 
@@ -13,6 +13,8 @@ import { TuiLayoutRunner } from './tui-layout-runner'
   },
 })
 export abstract class TuiLayoutHost implements AfterContentInit, OnDestroy {
+  private readonly el = inject(ElementRef<HTMLElement>)
+
   layoutDirection = input<'row' | 'column'>('row')
   width = signal<number>(0)
   height = signal<number>(0)
@@ -22,8 +24,6 @@ export abstract class TuiLayoutHost implements AfterContentInit, OnDestroy {
 
   private runner?: TuiLayoutRunner
 
-  constructor(protected readonly el: ElementRef<HTMLElement>) {}
-
   ngAfterContentInit(): void {
     this.runner = new TuiLayoutRunner(
       () => this.el.nativeElement,
@@ -31,14 +31,9 @@ export abstract class TuiLayoutHost implements AfterContentInit, OnDestroy {
       () => this.childFrames.toArray(),
     )
     this.runner.attach()
-    this.childFrames.changes.subscribe(() => this.runner?.recalculate())
   }
 
   ngOnDestroy(): void {
     this.runner?.detach()
-  }
-
-  recalculate(): void {
-    this.runner?.recalculate()
   }
 }

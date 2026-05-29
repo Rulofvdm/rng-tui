@@ -135,6 +135,28 @@ describe('TuiFrame', () => {
     expect(component.cornerVisible('top', 'end')).toBe(true);
   });
 
+  it('keeps top row width when left border is hidden', () => {
+    fixture.componentRef.setInput('hideBorders', { left: true });
+    component.applySize({ width: 10, height: 4 });
+    fixture.detectChanges();
+
+    expect(component.topRowText().length).toBe(10);
+    expect(component.horizontalRunWidth('top')).toBe('9ch');
+    expect(component.cornerVisible('top', 'start')).toBe(false);
+    expect(component.cornerVisible('top', 'end')).toBe(true);
+  });
+
+  it('keeps top row width when right border is hidden', () => {
+    fixture.componentRef.setInput('hideBorders', { right: true });
+    component.applySize({ width: 10, height: 4 });
+    fixture.detectChanges();
+
+    expect(component.topRowText().length).toBe(10);
+    expect(component.horizontalRunWidth('top')).toBe('9ch');
+    expect(component.cornerVisible('top', 'start')).toBe(true);
+    expect(component.cornerVisible('top', 'end')).toBe(false);
+  });
+
   it('exposes resolved border slots for styled header divs', () => {
     fixture.componentRef.setInput('borderContent', {
       top: { left: 'L', center: 'C', right: 'R' },

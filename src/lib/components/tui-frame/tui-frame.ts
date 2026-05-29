@@ -395,21 +395,21 @@ export class TuiFrame implements AfterViewInit, OnDestroy {
   }
 
   private horizontalRunColCount(side: 'top' | 'bottom'): number {
-    const inner = this.innerCols()
-    if (inner == null || inner <= 0) {
+    const cols = this.appliedWidth()
+    if (cols == null || cols <= 0) {
       return 0
     }
     const hidden = this.resolvedHideBorders()
     const startHidden = side === 'top' ? hidden.topLeft : hidden.bottomLeft
     const endHidden = side === 'top' ? hidden.topRight : hidden.bottomRight
-    let runCols = inner
-    if (startHidden) {
-      runCols++
+    let runCols = cols
+    if (!startHidden) {
+      runCols--
     }
-    if (endHidden) {
-      runCols++
+    if (!endHidden) {
+      runCols--
     }
-    return runCols
+    return Math.max(0, runCols)
   }
 
   private resolvedBorderSlots(side: 'top' | 'bottom'): TuiResolvedHorizontalSlots {

@@ -14,12 +14,25 @@ import {
 import type { TuiFrameLayout } from './tui-frame-layout'
 import { TuiLayoutRunner } from '../../tui-layout-runner'
 import {
+  renderHorizontalFillMask,
   renderHorizontalRun,
+  resolveHorizontalSlots,
   shouldRenderHorizontalRow,
+  TUI_BORDER_SLOT_IDS,
+  type TuiHorizontalSlotName,
   type TuiHorizontalSlots,
+  type TuiResolvedHorizontalSlot,
+  type TuiResolvedHorizontalSlots,
 } from './tui-frame-border'
 
-export type { TuiHorizontalAlignment, TuiHorizontalSlots } from './tui-frame-border'
+export type {
+  TuiHorizontalAlignment,
+  TuiHorizontalSlotName,
+  TuiHorizontalSlots,
+  TuiResolvedHorizontalSlot,
+  TuiResolvedHorizontalSlots,
+} from './tui-frame-border'
+export { TUI_BORDER_SLOT_IDS } from './tui-frame-border'
 
 export interface TuiFrameBorderContent {
   top?: TuiHorizontalSlots
@@ -307,6 +320,10 @@ export class TuiFrame implements AfterViewInit, OnDestroy {
 
   readonly topEdgeRun = computed(() => this.horizontalEdgeRun('top'))
   readonly bottomEdgeRun = computed(() => this.horizontalEdgeRun('bottom'))
+  readonly topFillRun = computed(() => this.horizontalFillRun('top'))
+  readonly bottomFillRun = computed(() => this.horizontalFillRun('bottom'))
+  readonly topBorderSlots = computed(() => this.resolvedBorderSlots('top'))
+  readonly bottomBorderSlots = computed(() => this.resolvedBorderSlots('bottom'))
   readonly topRowText = computed(() => this.horizontalRowText('top'))
   readonly bottomRowText = computed(() => this.horizontalRowText('bottom'))
 
@@ -353,6 +370,30 @@ export class TuiFrame implements AfterViewInit, OnDestroy {
     return which === 'start' ? (chars.bottomLeft ?? '╰') : (chars.bottomRight ?? '╯')
   }
 
+  cornerVisible(side: 'top' | 'bottom', which: 'start' | 'end'): boolean {
+    const hidden = this.resolvedHideBorders()
+    if (which === 'start') {
+      return side === 'top' ? !hidden.topLeft : !hidden.bottomLeft
+    }
+    return side === 'top' ? !hidden.topRight : !hidden.bottomRight
+  }
+
+  horizontalRunWidth(side: 'top' | 'bottom'): string {
+    return `${this.horizontalRunColCount(side)}ch`
+  }
+
+  borderSlotId(side: 'top' | 'bottom', slot: TuiHorizontalSlotName): string {
+    return TUI_BORDER_SLOT_IDS[side][slot]
+  }
+
+  borderSlotOffset(slot: TuiResolvedHorizontalSlot): string {
+    return `${slot.startCol}ch`
+  }
+
+  borderSlotWidth(slot: TuiResolvedHorizontalSlot): string {
+    return `${slot.widthCols}ch`
+  }
+
   private horizontalRunColCount(side: 'top' | 'bottom'): number {
     const inner = this.innerCols()
     if (inner == null || inner <= 0) {
@@ -371,21 +412,40 @@ export class TuiFrame implements AfterViewInit, OnDestroy {
     return runCols
   }
 
+  private resolvedBorderSlots(side: 'top' | 'bottom'): TuiResolvedHorizontalSlots {
+    const runCols = this.horizontalRunColCount(side)
+    if (runCols <= 0) {
+      return {}
+    }
+    return resolveHorizontalSlots(runCols, this.horizontalSlots(side))
+  }
+
+  private horizontalFillRun(side: 'top' | 'bottom'): string {
+    const runCols = this.horizontalRunColCount(side)
+    if (runCols <= 0) {
+      return ''
+    }
+    return renderHorizontalFillMask(runCols, this.horizontalEdgeChar(side), this.horizontalSlots(side))
+  }
+
+  private horizontalEdgeChar(side: 'top' | 'bottom'): string {
+    const hidden = this.resolvedHideBorders()
+    const chars = this.borderCharacters()
+    const sideHidden = side === 'top' ? hidden.top : hidden.bottom
+    if (sideHidden) {
+      return ' '
+    }
+    return side === 'top'
+      ? (chars.horizontalTop ?? '─')
+      : (chars.horizontalBottom ?? '─')
+  }
+
   private horizontalEdgeRun(side: 'top' | 'bottom'): string {
     const runCols = this.horizontalRunColCount(side)
     if (runCols <= 0) {
       return ''
     }
-    const hidden = this.resolvedHideBorders()
-    const chars = this.borderCharacters()
-    const sideHidden = side === 'top' ? hidden.top : hidden.bottom
-    const edgeChar = sideHidden
-      ? ' '
-      : side === 'top'
-        ? (chars.horizontalTop ?? '─')
-        : (chars.horizontalBottom ?? '─')
-    const slots = this.horizontalSlots(side)
-    return renderHorizontalRun(runCols, edgeChar, slots)
+    return renderHorizontalRun(runCols, this.horizontalEdgeChar(side), this.horizontalSlots(side))
   }
 
   private horizontalSlots(side: 'top' | 'bottom'): TuiHorizontalSlots {

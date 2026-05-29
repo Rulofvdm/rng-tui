@@ -43,7 +43,7 @@ export class LayoutEngine {
         const childFillWeight = isRow ? (child.fillX ?? 0) : (child.fillY ?? 0)
         if (!childFillWeight) continue
         const axisUnitSizeInPixels = isRow ? this.cellSizeInPx.ch : this.cellSizeInPx.lh
-        const mainAxisSizeInUnits = Math.round((pixelsLeftToDistributeAlongMainAxis * (childFillWeight / totaltMainAxisFill)) / axisUnitSizeInPixels)
+        const mainAxisSizeInUnits = Math.floor((pixelsLeftToDistributeAlongMainAxis * (childFillWeight / totaltMainAxisFill)) / axisUnitSizeInPixels)
         if (isRow) {
           result[i].width = mainAxisSizeInUnits
         } else {

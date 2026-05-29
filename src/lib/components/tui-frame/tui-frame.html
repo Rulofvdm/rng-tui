@@ -1,6 +1,38 @@
 @if (topRowVisible()) {
-    <div aria-hidden="true">
-        {{ topRowText() }}
+    <div class="tui-frame__row--h" aria-hidden="true">
+        @if (cornerVisible('top', 'start')) {
+            <span class="tui-frame__corner">{{ cornerChar('top', 'start') }}</span>
+        }
+        <span class="tui-frame__edge-h-run" [style.width]="horizontalRunWidth('top')">
+            <span class="tui-frame__edge-h-fill">{{ topFillRun() }}</span>
+            @if (topBorderSlots().left; as slot) {
+                <div
+                    [id]="borderSlotId('top', 'left')"
+                    class="tui-frame__border-slot tui-frame__border-slot--left"
+                    [style.left]="borderSlotOffset(slot)"
+                    [style.width]="borderSlotWidth(slot)"
+                >{{ slot.text }}</div>
+            }
+            @if (topBorderSlots().center; as slot) {
+                <div
+                    [id]="borderSlotId('top', 'center')"
+                    class="tui-frame__border-slot tui-frame__border-slot--center"
+                    [style.left]="borderSlotOffset(slot)"
+                    [style.width]="borderSlotWidth(slot)"
+                >{{ slot.text }}</div>
+            }
+            @if (topBorderSlots().right; as slot) {
+                <div
+                    [id]="borderSlotId('top', 'right')"
+                    class="tui-frame__border-slot tui-frame__border-slot--right"
+                    [style.left]="borderSlotOffset(slot)"
+                    [style.width]="borderSlotWidth(slot)"
+                >{{ slot.text }}</div>
+            }
+        </span>
+        @if (cornerVisible('top', 'end')) {
+            <span class="tui-frame__corner">{{ cornerChar('top', 'end') }}</span>
+        }
     </div>
 }
 
@@ -25,7 +57,39 @@
 </div>
 
 @if (bottomRowVisible()) {
-<div aria-hidden="true">
-    {{ bottomRowText() }}
-</div>
+    <div class="tui-frame__row--h" aria-hidden="true">
+        @if (cornerVisible('bottom', 'start')) {
+            <span class="tui-frame__corner">{{ cornerChar('bottom', 'start') }}</span>
+        }
+        <span class="tui-frame__edge-h-run" [style.width]="horizontalRunWidth('bottom')">
+            <span class="tui-frame__edge-h-fill">{{ bottomFillRun() }}</span>
+            @if (bottomBorderSlots().left; as slot) {
+                <div
+                    [id]="borderSlotId('bottom', 'left')"
+                    class="tui-frame__border-slot tui-frame__border-slot--left"
+                    [style.left]="borderSlotOffset(slot)"
+                    [style.width]="borderSlotWidth(slot)"
+                >{{ slot.text }}</div>
+            }
+            @if (bottomBorderSlots().center; as slot) {
+                <div
+                    [id]="borderSlotId('bottom', 'center')"
+                    class="tui-frame__border-slot tui-frame__border-slot--center"
+                    [style.left]="borderSlotOffset(slot)"
+                    [style.width]="borderSlotWidth(slot)"
+                >{{ slot.text }}</div>
+            }
+            @if (bottomBorderSlots().right; as slot) {
+                <div
+                    [id]="borderSlotId('bottom', 'right')"
+                    class="tui-frame__border-slot tui-frame__border-slot--right"
+                    [style.left]="borderSlotOffset(slot)"
+                    [style.width]="borderSlotWidth(slot)"
+                >{{ slot.text }}</div>
+            }
+        </span>
+        @if (cornerVisible('bottom', 'end')) {
+            <span class="tui-frame__corner">{{ cornerChar('bottom', 'end') }}</span>
+        }
+    </div>
 }

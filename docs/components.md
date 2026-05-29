@@ -53,6 +53,13 @@ Frame container with optional borders, margins, and sizing rules (fixed or fill)
   - Supports rendering left, center, and right labels at the same time.
   - Overlap priority is `left > right > center` when slots compete for the same columns.
   - If a top/bottom border side is hidden but a slot contains text, that row still renders so the text remains visible.
+  - Each non-empty slot is rendered as a `div` with a stable id for styling from the consuming app:
+    - `#tui-border-top-left`, `#tui-border-top-center`, `#tui-border-top-right`
+    - `#tui-border-bottom-left`, `#tui-border-bottom-center`, `#tui-border-bottom-right`
+  - Slot ids are also exported as `TUI_BORDER_SLOT_IDS` from the package.
+  - Style these ids from **global** CSS (e.g. `src/styles.css`) or with `:host ::ng-deep` in a parent component. Component-scoped styles (e.g. `app.css`) do not reach inside `tui-frame` because of Angular emulated encapsulation.
+  - Empty slots are omitted from the DOM so they collapse; slot width and position still follow the same alignment and truncation rules as the composed border run.
+  - When the frame is too narrow for all labels, slots shrink using the same overlap rules as the composed border run (`left` wins over `right` over `center`); fully covered slots disappear and partially covered slots show only their surviving characters.
 - `borderCharacters: { topLeft?: string; topRight?: string; bottomLeft?: string; bottomRight?: string; horizontal?: string; horizontalTop?: string; horizontalBottom?: string; vertical?: string; verticalLeft?: string; verticalRight?: string }`
   - Customizes border glyphs.
   - `horizontal` applies to both top and bottom if set.

@@ -21,30 +21,31 @@ describe('TuiFrame', () => {
   });
 
   it('defaults to fill mode with weight 1', () => {
-    expect(component.spec).toEqual({ mode: 'fill', fill: 1 });
-    expect(component.layout.fillX).toBe(1);
-    expect(component.layout.width).toBeUndefined();
+    expect(component.resolvedFillX()).toBe(1);
+    expect(component.layout().fillX).toBe(1);
+    expect(component.layout().width).toBeUndefined();
   });
 
   it('uses fixed width when width is set', () => {
     fixture.componentRef.setInput('width', 40);
     fixture.detectChanges();
-    expect(component.spec).toEqual({ mode: 'fixed', cols: 40 });
-    expect(component.layout.fillX).toBeUndefined();
+    expect(component.layout().width).toBe(40);
+    expect(component.resolvedFillX()).toBeUndefined();
   });
 
   it('uses fill weight when fillX is set', () => {
     fixture.componentRef.setInput('fillX', 3);
     fixture.detectChanges();
-    expect(component.spec).toEqual({ mode: 'fill', fill: 3 });
+    expect(component.resolvedFillX()).toBe(3);
+    expect(component.layout().fillX).toBe(3);
   });
 
   it('prefers width over fillX when both are set', () => {
     fixture.componentRef.setInput('fillX', 3);
     fixture.componentRef.setInput('width', 40);
     fixture.detectChanges();
-    expect(component.spec).toEqual({ mode: 'fixed', cols: 40 });
-    expect(component.layout.fillX).toBeUndefined();
+    expect(component.layout().width).toBe(40);
+    expect(component.resolvedFillX()).toBeUndefined();
   });
 
   it('shows header text when top border is hidden', () => {
@@ -53,8 +54,8 @@ describe('TuiFrame', () => {
     component.applySize({ width: 10, height: 4 });
     fixture.detectChanges();
 
-    expect(component.topRowVisible()).toBeTrue();
-    expect(component.topEdgeRun()).toBe('HEADER   ');
+    expect(component.topRowVisible()).toBe(true);
+    expect(component.topEdgeRun()).toBe('HEADER    ');
   });
 
   it('truncates header text to preserve corners on small frames', () => {
@@ -70,7 +71,7 @@ describe('TuiFrame', () => {
     component.applySize({ width: 10, height: 4 });
     fixture.detectChanges();
 
-    expect(component.topRowVisible()).toBeFalse();
+    expect(component.topRowVisible()).toBe(false);
   });
 
   it('keeps footer text when bottom border is hidden', () => {
@@ -79,8 +80,8 @@ describe('TuiFrame', () => {
     component.applySize({ width: 10, height: 4 });
     fixture.detectChanges();
 
-    expect(component.bottomRowVisible()).toBeTrue();
-    expect(component.bottomEdgeRun()).toBe('FOOT    ');
+    expect(component.bottomRowVisible()).toBe(true);
+    expect(component.bottomEdgeRun()).toBe('FOOT      ');
   });
 
   it('centers header text in the border run', () => {
@@ -118,7 +119,33 @@ describe('TuiFrame', () => {
     fixture.detectChanges();
 
     expect(component.topEdgeRun()).toBe('TopL──TopR');
-    expect(component.bottomEdgeRun()).toBe('BotLBotCBotR');
+    expect(component.bottomEdgeRun()).toBe('BotLotBotR');
+  });
+
+  it('keeps top row text length equal to applied width', () => {
+    fixture.componentRef.setInput('borderContent', {
+      top: { left: 'L', center: 'C', right: 'R' },
+    });
+    component.applySize({ width: 10, height: 4 });
+    fixture.detectChanges();
+
+    expect(component.topRowText().length).toBe(10);
+    expect(component.horizontalRunWidth('top')).toBe('8ch');
+    expect(component.cornerVisible('top', 'start')).toBe(true);
+    expect(component.cornerVisible('top', 'end')).toBe(true);
+  });
+
+  it('exposes resolved border slots for styled header divs', () => {
+    fixture.componentRef.setInput('borderContent', {
+      top: { left: 'L', center: 'C', right: 'R' },
+    });
+    component.applySize({ width: 10, height: 4 });
+    fixture.detectChanges();
+
+    expect(component.topBorderSlots().left?.text).toBe('L');
+    expect(component.topBorderSlots().center?.startCol).toBe(3);
+    expect(component.borderSlotId('top', 'right')).toBe('tui-border-top-right');
+    expect(component.topFillRun()).toBe(' ── ─── ');
   });
 
 });

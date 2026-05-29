@@ -5,6 +5,57 @@
   overflow: hidden;
 }
 
+.tui-frame__row--h {
+  display: flex;
+  flex: 0 0 1lh;
+  height: 1lh;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.tui-frame__corner {
+  flex: 0 0 1ch;
+  width: 1ch;
+  overflow: hidden;
+  white-space: pre;
+}
+
+.tui-frame__edge-h-run {
+  position: relative;
+  flex: 0 0 auto;
+  height: 1lh;
+  overflow: hidden;
+}
+
+.tui-frame__edge-h-fill {
+  display: block;
+  overflow: hidden;
+  white-space: pre;
+  pointer-events: none;
+}
+
+.tui-frame__border-slot {
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  height: 1lh;
+  overflow: hidden;
+  white-space: pre;
+  box-sizing: border-box;
+}
+
+.tui-frame__border-slot--left {
+  z-index: 3;
+}
+
+.tui-frame__border-slot--right {
+  z-index: 2;
+}
+
+.tui-frame__border-slot--center {
+  z-index: 1;
+}
+
 .tui-frame__row--middle {
   display: flex;
   flex: 1 1 auto;
@@ -24,7 +75,6 @@
   border: 0;
   background: transparent;
   font: inherit;
-  /* overflow: hidden; */
   box-sizing: border-box;
 }
 

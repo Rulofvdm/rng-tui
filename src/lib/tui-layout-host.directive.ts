@@ -1,4 +1,4 @@
-import { AfterContentInit, ContentChildren, Directive, ElementRef, inject, input, OnDestroy, QueryList, signal } from '@angular/core'
+import { AfterContentInit, ContentChildren, DestroyRef, Directive, ElementRef, inject, input, OnDestroy, QueryList, signal } from '@angular/core'
 import { TuiFrame } from './components/tui-frame/tui-frame'
 import { TuiLayoutRunner } from './tui-layout-runner'
 
@@ -13,6 +13,7 @@ import { TuiLayoutRunner } from './tui-layout-runner'
   },
 })
 export abstract class TuiLayoutHost implements AfterContentInit, OnDestroy {
+  private readonly destroyRef = inject(DestroyRef)
   private readonly el = inject(ElementRef<HTMLElement>)
 
   layoutDirection = input<'row' | 'column'>('row')
@@ -25,15 +26,34 @@ export abstract class TuiLayoutHost implements AfterContentInit, OnDestroy {
   private runner?: TuiLayoutRunner
 
   ngAfterContentInit(): void {
-    this.runner = new TuiLayoutRunner(
-      () => this.el.nativeElement,
-      () => this.layoutDirection(),
-      () => this.childFrames.toArray(),
-    )
-    this.runner.attach()
+    this.syncLayoutRunner()
+    const sub = this.childFrames.changes.subscribe(() => {
+      queueMicrotask(() => this.syncLayoutRunner())
+    })
+    this.destroyRef.onDestroy(() => sub.unsubscribe())
   }
 
   ngOnDestroy(): void {
     this.runner?.detach()
+  }
+
+  private syncLayoutRunner(): void {
+    if (this.childFrames.length === 0) {
+      this.runner?.detach()
+      this.runner = undefined
+      return
+    }
+
+    if (!this.runner) {
+      this.runner = new TuiLayoutRunner(
+        () => this.el.nativeElement,
+        () => this.layoutDirection(),
+        () => this.childFrames.toArray(),
+      )
+      this.runner.attach()
+      return
+    }
+
+    this.runner.recalculate()
   }
 }

@@ -3,7 +3,9 @@ import {
   Component,
   computed,
   ContentChildren,
+  DestroyRef,
   ElementRef,
+  inject,
   input,
   OnDestroy,
   QueryList,
@@ -122,6 +124,8 @@ const DEFAULT_FILL_WEIGHT = 1
 
 })
 export class TuiFrame implements AfterViewInit, OnDestroy {
+  private readonly destroyRef = inject(DestroyRef)
+
   hideBorders = input<TuiHideBorders>(false)
   borderContent = input<TuiFrameBorderContent>({})
 
@@ -236,20 +240,36 @@ export class TuiFrame implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    const content = this.contentEl()?.nativeElement
-    if (!content || this.childFrames.length === 0) {
-      return
-    }
-    this.contentLayoutRunner = new TuiLayoutRunner(
-      () => content,
-      () => this.contentLayout(),
-      () => this.childFrames.toArray(),
-    )
-    this.contentLayoutRunner.attach()
+    this.syncContentLayoutRunner()
+    const sub = this.childFrames.changes.subscribe(() => {
+      queueMicrotask(() => this.syncContentLayoutRunner())
+    })
+    this.destroyRef.onDestroy(() => sub.unsubscribe())
   }
 
   ngOnDestroy(): void {
     this.contentLayoutRunner?.detach()
+  }
+
+  private syncContentLayoutRunner(): void {
+    const content = this.contentEl()?.nativeElement
+    if (!content || this.childFrames.length === 0) {
+      this.contentLayoutRunner?.detach()
+      this.contentLayoutRunner = undefined
+      return
+    }
+
+    if (!this.contentLayoutRunner) {
+      this.contentLayoutRunner = new TuiLayoutRunner(
+        () => content,
+        () => this.contentLayout(),
+        () => this.childFrames.toArray(),
+      )
+      this.contentLayoutRunner.attach()
+      return
+    }
+
+    this.contentLayoutRunner.recalculate()
   }
 
   readonly resolvedHideBorders = computed((): TuiResolvedHideBorders => {

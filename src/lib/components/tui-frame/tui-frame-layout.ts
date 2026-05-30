@@ -1,6 +1,6 @@
 import type { TuiResolvedMargins } from './tui-frame'
 
-/** Layout snapshot read by {@link LayoutEngine} and {@link TuiLayoutHost}. */
+/** Layout snapshot read by {@link LayoutEngine} and {@link TuiTerminal}. */
 export interface TuiFrameLayout {
   margins: Readonly<TuiResolvedMargins>
   fillX: number | undefined

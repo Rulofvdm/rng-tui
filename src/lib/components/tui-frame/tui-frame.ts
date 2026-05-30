@@ -215,7 +215,7 @@ export class TuiFrame implements AfterViewInit, OnDestroy {
   })
 
   /**
-   * Snapshot of layout-related state for {@link TuiLayoutHost} and other library internals.
+   * Snapshot of layout-related state for {@link TuiTerminal} and other library internals.
    *
    * @internal
    */
